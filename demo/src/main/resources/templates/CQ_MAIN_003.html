@@ -128,7 +128,7 @@
                 </th:block>
 
                 <th:block th:if="${session.user != null}">
-                    <a href="/prototype/main2"><span class="text-gray-700">[ <b th:text="${session.user.email}">사용자</b> ]</span></a>
+                    <a href="/prototype/main2"><span class="text-gray-700">[ <b th:utext="${session.user.email}">사용자</b> ]</span></a>
                     <form th:action="@{/prototype/logout}" method="post" style="display:inline;">
 
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />

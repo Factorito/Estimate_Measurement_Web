@@ -16,11 +16,22 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         super(request);
     }
 
+    private String sanitize(String name, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return value;
+        }
+        // 'email' 파라미터는 정화하지 않음
+        if ("email".equalsIgnoreCase(name)) {
+            return value;
+        }
+        return POLICY_FACTORY.sanitize(value);
+    }
+
     // 파라미터 값 정화
     @Override
     public String getParameter(String name) {
         String value = super.getParameter(name);
-        return value == null ? null : sanitize(value);
+        return value == null ? null : sanitize(name, value);
     }
 
     // 파라미터 값 배열 정화
@@ -32,7 +43,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         }
         String[] sanitizedValues = new String[values.length];
         for (int i = 0; i < values.length; i++) {
-            sanitizedValues[i] = sanitize(values[i]);
+            sanitizedValues[i] = sanitize(name, values[i]);
         }
         return sanitizedValues;
     }
@@ -41,7 +52,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String getHeader(String name) {
         String value = super.getHeader(name);
-        return value == null ? null : sanitize(value);
+        return value == null ? null : sanitize(name, value);
     }
 
     // OWASP Sanitizer를 사용하여 문자열을 정화하는 메서드
